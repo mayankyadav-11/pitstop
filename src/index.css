@@ -1,0 +1,57 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@300;400;500;600;700&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --font-headline: "Space Grotesk", sans-serif;
+  --font-body: "Inter", sans-serif;
+
+  --color-background: #000000;
+  --color-surface: #151515;
+  --color-surface-low: #0a0a0a;
+  --color-surface-high: #252525;
+  --color-surface-highest: #333333;
+  --color-surface-bright: #444444;
+  
+  --color-primary: #e10600;
+  --color-primary-container: #ff1e1e;
+  --color-on-primary: #ffffff;
+  
+  --color-tertiary: #ffffff;
+  --color-tertiary-container: #f0f0f0;
+  
+  --color-on-surface: #ffffff;
+  --color-on-surface-variant: #cccccc;
+  
+  --color-error: #ff0000;
+  
+  --radius-xl: 1.5rem;
+}
+
+@layer base {
+  body {
+    @apply bg-background text-on-surface font-body antialiased;
+  }
+}
+
+.kinetic-gradient {
+  background: linear-gradient(135deg, #e10600 0%, #8b0000 100%);
+}
+
+.tertiary-gradient {
+  background: linear-gradient(135deg, #ffffff 0%, #cccccc 100%);
+}
+
+.glass-panel {
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.hide-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.hide-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
