@@ -1,6 +1,6 @@
 import { motion } from 'motion/react';
 import { Share2, MessagesSquare, Send } from 'lucide-react';
-import { MESSAGES } from '../constants';
+import { MESSAGES, DRIVERS } from '../constants';
 import TrackMap from './TrackMap';
 import { useState, useRef, useEffect, useMemo } from 'react';
 import { useLiveTrack } from '../lib/useLiveTrack';
@@ -240,8 +240,18 @@ export default function Engage() {
 }
 
 function PodiumCard({ winner }: { winner: RacePodium }) {
-  const normalizedName = winner.name.toLowerCase();
-  const driverImg = `/drivers/${normalizedName}.jpeg`;
+  const normalizedApiName = winner.name.toLowerCase()
+    .normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+
+  const driver = DRIVERS.find(d => {
+    const normalizedD = d.name.toLowerCase()
+      .normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+    return normalizedD === normalizedApiName || 
+           normalizedD.includes(normalizedApiName) || 
+           normalizedApiName.includes(normalizedD);
+  });
+
+  const driverImg = driver?.avatar || `/drivers/${normalizedApiName}.jpeg`;
   
   const constructorMap: Record<string, string> = {
     'ferrari': 'ferrari car.avif',
