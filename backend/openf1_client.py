@@ -69,7 +69,7 @@ class OpenF1Client:
                             end = datetime.fromisoformat(s["date_end"]) if s.get("date_end") else start + timedelta(hours=3)
                             if start <= now <= end:
                                 self._apply_session(s)
-                                logger.info(f"🟢 Live session found: {self.meeting_name}")
+                                logger.info(f"Live session found: {self.meeting_name}")
                                 return
                 except Exception:
                     pass
@@ -80,7 +80,7 @@ class OpenF1Client:
                 data = res.json()
                 if isinstance(data, list) and data:
                     self._apply_session(data[-1])
-                    logger.info(f"📌 Targeted session: {self.meeting_name} {year}")
+                    logger.info(f"Targeted session: {self.meeting_name} {year}")
                     return
 
             # 3. Fallback — most recent COMPLETED race (date_start in the past)
@@ -93,12 +93,12 @@ class OpenF1Client:
                         completed = [s for s in data if datetime.fromisoformat(s["date_start"]) < now]
                         if completed:
                             self._apply_session(completed[-1])  # most recent completed
-                            logger.info(f"📌 Latest completed race: {self.meeting_name} ({yr})")
+                            logger.info(f"Latest completed race: {self.meeting_name} ({yr})")
                             return
                 except Exception:
                     pass
 
-            logger.warning("⚠️  No session found from OpenF1")
+            logger.warning("No session found from OpenF1")
         except Exception as e:
             logger.error(f"Error resolving session: {e}")
 
@@ -205,46 +205,52 @@ class OpenF1Client:
 
     def build_track_path(self):
         """
-        Trace one full lap from a single driver to define the track shape.
+        Trace one full lap from a single driver to define the track shape for the current session.
         Uses lap 3 (when drivers are up to speed after formation laps).
         """
         if not self.session_key or self.track_path:
             return  # already built or no session
 
+        self.track_path = self.get_raw_track_points(self.session_key)
+
+    def get_raw_track_points(self, session_key: int) -> List[Dict[str, float]]:
+        """
+        Fetch every position sample for driver 1 during lap 3 of a specific session.
+        Returns raw GPS {x, y} coordinates.
+        """
         try:
             # Get lap 3 timestamps for driver 1
             res = self.client.get(
-                f"/laps?session_key={self.session_key}&driver_number=1&lap_number=3"
+                f"/laps?session_key={session_key}&driver_number=1&lap_number=3"
             )
             laps = res.json()
             if not isinstance(laps, list) or not laps:
-                logger.warning("Cannot build track path: no lap 3 data")
-                return
+                logger.warning(f"No lap 3 data for session {session_key}")
+                return []
 
             lap_start = laps[0].get("date_start")
             # For end, get lap 4 start or add ~120s
             res2 = self.client.get(
-                f"/laps?session_key={self.session_key}&driver_number=1&lap_number=4"
+                f"/laps?session_key={session_key}&driver_number=1&lap_number=4"
             )
             laps4 = res2.json()
             if isinstance(laps4, list) and laps4:
                 lap_end = laps4[0].get("date_start")
             else:
-                # fallback: add 120s to get roughly one lap
                 dt = datetime.fromisoformat(lap_start) + timedelta(seconds=120)
                 lap_end = dt.isoformat()
 
-            # Fetch every position sample for driver 1 during this lap
+            # Fetch positions
             res3 = self.client.get(
-                f"/location?session_key={self.session_key}&driver_number=1"
+                f"/location?session_key={session_key}&driver_number=1"
                 f"&date>={lap_start}&date<{lap_end}"
             )
             points = res3.json()
             if isinstance(points, list) and points:
-                self.track_path = [{"x": p["x"], "y": p["y"]} for p in points if "x" in p and "y" in p]
-                logger.info(f"Track path built with {len(self.track_path)} points")
+                return [{"x": p["x"], "y": p["y"]} for p in points if "x" in p and "y" in p]
         except Exception as e:
-            logger.error(f"Error building track path: {e}")
+            logger.error(f"Error getting raw track points for {session_key}: {e}")
+        return []
 
     # ── Race control & pits (for AI) ──────────────────────────────
 

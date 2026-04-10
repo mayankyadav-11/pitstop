@@ -16,9 +16,9 @@ GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
 
 if GEMINI_API_KEY:
     genai.configure(api_key=GEMINI_API_KEY)
-    print("✅ Gemini API configured")
+    print("[OK] Gemini API configured")
 else:
-    print("⚠️  GEMINI_API_KEY not found in .env — AI features will return fallback text")
+    print("[WARN] GEMINI_API_KEY not found in .env — AI features will return fallback text")
 
 # ─── The Gemini Model ──────────────────────────────────────────
 MODEL_NAME = "gemini-2.0-flash"
@@ -52,7 +52,7 @@ async def explain_why(lap_context: dict) -> dict:
     if not GEMINI_API_KEY:
         return {
             "lap": lap_context.get("lap", 0),
-            "explanation": "⚠️ AI unavailable — set GEMINI_API_KEY in your .env file to enable race insights.",
+            "explanation": "AI unavailable — set GEMINI_API_KEY in your .env file to enable race insights.",
             "source": "fallback",
         }
 
@@ -91,7 +91,7 @@ async def explain_why(lap_context: dict) -> dict:
         }
 
     except Exception as e:
-        print(f"❌ Gemini API error: {e}")
+        print(f"[ERROR] Gemini API error: {e}")
         # Fallback to simulated insight so the app remains free and functional!
         simulated_explanation = f"Based on the telemetry for {lap_context.get('meeting', 'this race')}, the leaders are maintaining their pace to manage tire degradation. We should watch for the pit window opening in the next few laps as grip levels drop."
         

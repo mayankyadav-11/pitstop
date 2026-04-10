@@ -117,7 +117,7 @@ def init_scaler():
 # ─── Socket events ─────────────────────────────────────────────
 @sio.event
 async def connect(sid, environ):
-    logger.info(f"🔌 Client connected: {sid}")
+    logger.info(f"Client connected: {sid}")
 
     # Send session info
     info = openf1.get_session_info()
@@ -144,14 +144,14 @@ async def connect(sid, environ):
 
 @sio.event
 async def disconnect(sid):
-    logger.info(f"❌ Client disconnected: {sid}")
+    logger.info(f"Client disconnected: {sid}")
 
 
 # ─── Feed loop ─────────────────────────────────────────────────
 async def _run_live_feed():
     global _playback_cursor, _lap_timestamps, _sent_track_path
 
-    logger.info("🏎️  Starting live feed loop...")
+    logger.info("Starting live feed loop...")
 
     # Determine if this is a live or historical session
     is_live = False
@@ -161,11 +161,11 @@ async def _run_live_feed():
         session_end_est = session_start + timedelta(hours=3)
         if session_start <= now <= session_end_est:
             is_live = True
-            logger.info("🟢 Live mode — tracking current UTC time")
+            logger.info("Live mode — tracking current UTC time")
         else:
             # Historical playback — start from the beginning
             _playback_cursor = session_start
-            logger.info(f"🔄 Playback mode — starting from {session_start.isoformat()}")
+            logger.info(f"Playback mode — starting from {session_start.isoformat()}")
     else:
         logger.warning("No date_start — feed will idle")
         return
@@ -191,7 +191,7 @@ async def _run_live_feed():
                 if openf1.date_end:
                     end_dt = datetime.fromisoformat(openf1.date_end)
                     if t_start > end_dt:
-                        logger.info("🏁 Playback complete — restarting from lap 1")
+                        logger.info("Playback complete — restarting from lap 1")
                         _playback_cursor = session_start
                         await asyncio.sleep(3)
                         continue
@@ -237,7 +237,7 @@ async def _run_live_feed():
                 })
 
         except Exception as e:
-            logger.error(f"⚠️  Feed error: {e}")
+            logger.error(f"Feed error: {e}")
 
         await asyncio.sleep(POLL_INTERVAL)
 

@@ -37,7 +37,7 @@ app.add_middleware(
 @app.get("/health")
 async def health_check():
     return {
-        "status": "🟢 PitStop backend is running",
+        "status": "PitStop backend is running",
         "version": "0.2.0",
         "session": openf1.get_session_info(),
     }
@@ -104,7 +104,7 @@ async def startup_event():
     init_scaler()
 
     info = openf1.get_session_info()
-    print(f"🏎️  PitStop targeting: {info['meeting_name']} (session {info['session_key']})")
+    print(f"PitStop targeting: {info['meeting_name']} (session {info['session_key']})")
     print(f"   Circuit: {info['circuit_short_name']} | Laps: {info['total_laps']}")
     print(f"   Drivers cached: {len(openf1.drivers)}")
     print(f"   Track path points: {len(openf1.track_path)}")
