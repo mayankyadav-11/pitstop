@@ -49,6 +49,13 @@ async def get_lap(lap_number: int):
     return openf1.get_lap_context(lap_number)
 
 
+# ─── Home Tab: Last 10 Laps ────────────────────────────────────
+@app.get("/api/home/laps")
+async def get_home_laps():
+    """Returns events grouped by lap for the last 10 laps of the race."""
+    return openf1.get_last_10_laps_events()
+
+
 # ─── AI "Why" Endpoint ─────────────────────────────────────────
 @app.get("/api/why")
 async def why_endpoint(lap: int = Query(..., ge=1, description="Lap number to analyze")):

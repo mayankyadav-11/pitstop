@@ -1,3 +1,5 @@
+import { EventCard } from "../types";
+
 /**
  * PitStop — Backend API Client
  * ==============================
@@ -27,6 +29,18 @@ export async function fetchWhyExplanation(lap: number): Promise<{
       explanation: "Unable to reach PitStop AI. Make sure the backend is running on port 8000.",
       source: "error",
     };
+  }
+}
+
+// ─── REST: Home Laps (Last 10 Laps) ───────────────────────────
+export async function fetchHomeLaps(): Promise<Record<string, EventCard[]>> {
+  try {
+    const response = await fetch(`${API_BASE}/api/home/laps`);
+    if (!response.ok) throw new Error(`HTTP ${response.status}`);
+    return await response.json();
+  } catch (error) {
+    console.error("Home laps error:", error);
+    return {};
   }
 }
 

@@ -46,4 +46,5 @@ export interface EventCard {
   impact?: string;
   posGained?: string;
   insight?: string;
+  teamCarImage?: string;
 }

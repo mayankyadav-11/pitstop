@@ -24,6 +24,22 @@ logger = logging.getLogger(__name__)
 
 OPENF1_BASE = "https://api.openf1.org/v1"
 
+# Mapping for 30% opacity car backgrounds
+TEAM_CAR_MAP = {
+    "Red Bull Racing": "redbull car.avif",
+    "McLaren": "mclaren car.avif",
+    "Ferrari": "ferrari car.avif",
+    "Mercedes": "mercedes car.avif",
+    "Aston Martin": "aston martin car.avif",
+    "Alpine": "alpine.avif",
+    "Williams": "williams car.avif",
+    "Haas": "haas car.avif",
+    "RB": "racing bulls car.avif",
+    "VCARB": "racing bulls car.avif",
+    "Sauber": "audi car.avif",
+    "Audi": "audi car.avif",
+    "Cadillac": "cadillac car.avif",
+}
 
 class OpenF1Client:
     def __init__(self):
@@ -293,6 +309,86 @@ class OpenF1Client:
             "events": self.get_race_control()[-10:],
             "pit_stops": self.get_pit_stops(lap_number),
         }
+
+    def get_last_10_laps_events(self) -> Dict[int, List[Dict[str, Any]]]:
+        """
+        Groups race control and pit events for the last 10 laps of the race.
+        Returns a dict: { lap_number: [events_list] }
+        """
+        if not self.session_key:
+            return {}
+
+        if self.total_laps == 0:
+            self.fetch_total_laps()
+
+        start_lap = max(1, self.total_laps - 9)
+        all_laps_events = {}
+
+        # 1. Fetch Race Control
+        rc_events = self.get_race_control()
+        
+        # 2. Fetch Pit Stops (all for session, then filter)
+        pits = self.get_pit_stops()
+
+        # Helper to find car image
+        def get_car_img(driver_num: Optional[int], message: str = "") -> Optional[str]:
+            team_name = ""
+            if driver_num and driver_num in self.drivers:
+                team_name = self.drivers[driver_num]["team"]
+            else:
+                # Try to find team name in message
+                for team in TEAM_CAR_MAP.keys():
+                    if team.lower() in message.lower():
+                        team_name = team
+                        break
+            
+            if not team_name:
+                return None
+            
+            # Match team_name to TEAM_CAR_MAP
+            for key, img in TEAM_CAR_MAP.items():
+                if key.lower() in team_name.lower():
+                    return f"/logos/{img}"
+            return None
+
+        for lap in range(start_lap, self.total_laps + 1):
+            lap_events = []
+            
+            # Filter Race Control for this lap
+            for rc in rc_events:
+                if rc.get("lap_number") == lap:
+                    lap_events.append({
+                        "id": f"rc_{rc.get('event_id', lap)}",
+                        "lap": lap,
+                        "title": rc.get("category", "Incident").upper(),
+                        "description": rc.get("message", ""),
+                        "type": "warning" if rc.get("flag") else "pit" if "PIT" in rc.get("message", "") else "overtake",
+                        "teamCarImage": get_car_img(rc.get("driver_number"), rc.get("message", "")),
+                        "impact": "HIGH" if rc.get("flag") in ["RED", "SAFETY CAR"] else "MEDIUM"
+                    })
+
+            # Filter Pits for this lap
+            for p in pits:
+                if p.get("lap_number") == lap:
+                    dr_num = p.get("driver_number")
+                    dr_name = self.drivers.get(dr_num, {}).get("name", f"Driver {dr_num}")
+                    lap_events.append({
+                        "id": f"pit_{dr_num}_{lap}",
+                        "lap": lap,
+                        "title": f"PIT STOP: {dr_name}",
+                        "description": f"Pit stop confirmed for {dr_name}. Duration: {p.get('pit_duration', 'N/A')}s",
+                        "type": "pit",
+                        "teamCarImage": get_car_img(dr_num),
+                        "stat": f"{p.get('pit_duration', 'N/A')}s STOP"
+                    })
+
+            if lap_events:
+                all_laps_events[lap] = lap_events
+            else:
+                # Add a default entry so the lap shows up in the UI
+                all_laps_events[lap] = []
+
+        return all_laps_events
 
     def get_session_info(self) -> Dict[str, Any]:
         return {
