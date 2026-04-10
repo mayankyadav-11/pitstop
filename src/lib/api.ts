@@ -10,14 +10,14 @@ import { EventCard } from "../types";
 const API_BASE = "http://localhost:8000";
 
 // ─── REST: "Why?" Button ───────────────────────────────────────
-export async function fetchWhyExplanation(lap: number): Promise<{
+export async function fetchWhyExplanation(lap: number, event: string = ""): Promise<{
   lap: number;
   explanation: string;
   source: string;
   track_status?: string;
 }> {
   try {
-    const response = await fetch(`${API_BASE}/api/why?lap=${lap}`);
+    const response = await fetch(`${API_BASE}/api/why?lap=${lap}&event=${encodeURIComponent(event)}`);
     if (!response.ok) {
       throw new Error(`HTTP ${response.status}`);
     }

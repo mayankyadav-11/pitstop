@@ -302,11 +302,15 @@ class OpenF1Client:
 
     def get_lap_context(self, lap_number: int) -> Dict[str, Any]:
         """Build AI-ready context for a specific lap."""
+        # Filter session events for the specific lap
+        all_rc = self.get_race_control()
+        lap_events = [rc for rc in all_rc if rc.get("lap_number") == lap_number]
+        
         return {
             "lap": lap_number,
             "meeting": self.meeting_name,
             "circuit": self.circuit_short_name,
-            "events": self.get_race_control()[-10:],
+            "events": lap_events if lap_events else all_rc[-5:], # fallback to recent if empty
             "pit_stops": self.get_pit_stops(lap_number),
         }
 

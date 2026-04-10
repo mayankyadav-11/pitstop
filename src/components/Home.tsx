@@ -131,7 +131,7 @@ function EventCard({ event }: { event: EventType }) {
     setIsLoading(true);
 
     try {
-      const result = await fetchWhyExplanation(event.lap);
+      const result = await fetchWhyExplanation(event.lap, `${event.title}: ${event.description}`);
       setAiInsight(result.explanation);
     } catch (err) {
       setAiInsight(event.insight || "Unable to fetch AI analysis.");

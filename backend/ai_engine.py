@@ -38,13 +38,14 @@ RULES:
 """
 
 
-async def explain_why(lap_context: dict) -> dict:
+async def explain_why(lap_context: dict, target_event: str = "") -> dict:
     """
     Given lap context from FastF1, ask Gemini to explain the strategy.
 
     Args:
         lap_context: dict from get_current_lap_context()
-
+        target_event: the specific event description to explain
+    
     Returns:
         dict with "explanation" (AI text) and "lap" (number)
     """
@@ -65,7 +66,7 @@ async def explain_why(lap_context: dict) -> dict:
         }
 
     # ── Build the data prompt ──────────────────────────────────
-    data_prompt = _build_data_prompt(lap_context)
+    data_prompt = _build_data_prompt(lap_context, target_event)
 
     try:
         model = genai.GenerativeModel(
@@ -102,7 +103,7 @@ async def explain_why(lap_context: dict) -> dict:
         }
 
 
-def _build_data_prompt(ctx: dict) -> str:
+def _build_data_prompt(ctx: dict, target_event: str = "") -> str:
     """
     Convert structured lap context into a natural-language prompt
     for Gemini to analyze.
@@ -123,6 +124,7 @@ def _build_data_prompt(ctx: dict) -> str:
 
 RACE: {ctx.get('meeting', 'Unknown GP')}
 LAP: {ctx.get('lap', 0)}
+TARGET EVENT TO EXPLAIN: {target_event if target_event else "The general strategic situation of the lap"}
 
 RECENT RACE CONTROL EVENTS:
 {events_text if events_text else "None"}
@@ -130,8 +132,8 @@ RECENT RACE CONTROL EVENTS:
 RECENT PIT STOPS:
 {pits_text if pits_text else "None"}
 
-Based on this limited OpenF1 telemetry data, explain the current strategic situation to a casual fan.
-If there are safety cars or pit stops, focus on those. If nothing is happening, talk about the general pace of the {ctx.get('meeting', 'Unknown GP')} track.
-Why are the leaders making these decisions? What should we watch for next?"""
+Based on this telemetry data, provide a unique explanation for the TARGET EVENT. 
+If explaining a pit stop, tell us why they chose this lap. If explaining a flag or incident, explain the technical or strategic cause.
+Respond with a unique insight that hasn't been shared for other laps."""
 
     return prompt

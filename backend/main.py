@@ -58,15 +58,17 @@ async def get_home_laps():
 
 # ─── AI "Why" Endpoint ─────────────────────────────────────────
 @app.get("/api/why")
-async def why_endpoint(lap: int = Query(..., ge=1, description="Lap number to analyze")):
+async def why_endpoint(
+    lap: int = Query(..., ge=1, description="Lap number to analyze"),
+    event: str = Query("", description="Specific event text to focus on")
+):
     """
     The "Why it Happened" endpoint.
-    1. Fetches lap context from OpenF1
-    2. Sends it to Gemini 2.0 Flash with a strategist prompt
-    3. Returns a concise AI explanation
+    1. Fetches lap context from OpenF1 (filtered by lap)
+    2. Sends it to Gemini with the specific event focus
     """
     lap_context = openf1.get_lap_context(lap)
-    result = await explain_why(lap_context)
+    result = await explain_why(lap_context, event)
     return result
 
 
