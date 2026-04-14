@@ -31,18 +31,27 @@ export default function ShopTab() {
           {/* Animated Gradient Border */}
           <div className="absolute inset-0 bg-gradient-to-r from-primary via-orange-500 to-primary opacity-70 group-hover:opacity-100 transition-opacity duration-300 animate-[spin_3s_linear_infinite]" style={{ backgroundImage: 'conic-gradient(from 0deg, #e10600, #ff8c00, #e10600, #8b0000)' }} />
 
-          <div className="relative bg-surface rounded-2xl overflow-hidden shadow-[0_0_20px_rgba(225,6,0,0.2)] group-hover:shadow-[0_0_30px_rgba(225,6,0,0.5)] transition-shadow duration-300">
-            <div className="absolute top-3 left-3 bg-error text-white text-[10px] uppercase font-bold px-2 py-1 rounded-md z-10 shadow-lg border border-white/20">
+          <div className="relative bg-surface rounded-2xl overflow-hidden shadow-[0_0_20px_rgba(225,6,0,0.2)] group-hover:shadow-[0_0_30px_rgba(225,6,0,0.5)] transition-shadow duration-300 min-h-[400px]">
+            <div className="absolute top-4 left-4 bg-error text-white text-xs uppercase font-bold px-3 py-1.5 rounded-md z-20 shadow-lg border border-white/20">
               Limited Edition
             </div>
+            
             <img
               src={exDrop1}
               alt="Exclusive Drop"
-              className="w-full h-48 object-cover object-center group-hover:scale-105 transition-transform duration-500"
+              className="absolute inset-0 w-full h-[500px] object-contain object-center group-hover:scale-105 transition-transform duration-500 py-10 z-0"
             />
-            <div className="p-4 bg-gradient-to-t from-surface via-surface/90 to-transparent absolute bottom-0 w-full pt-12">
-              <h3 className="font-bold text-on-surface">Driver's Signed Jacket</h3>
-              <p className="text-primary font-bold mt-1">$450.00</p>
+            
+            <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-transparent to-transparent z-10 pointer-events-none" />
+
+            <div className="absolute bottom-6 left-6 z-20">
+              <h3 className="text-3xl font-black text-white uppercase tracking-tight drop-shadow-lg">Driver's Signed Jacket</h3>
+              <p className="text-primary text-2xl font-black mt-2 drop-shadow-lg">$450.00</p>
+            </div>
+            
+            <div className="absolute bottom-6 right-6 flex gap-4 z-20">
+              <button onClick={(e) => e.stopPropagation()} className="px-8 py-4 text-sm font-bold uppercase tracking-widest bg-black/40 backdrop-blur-md border border-white/20 hover:bg-white/10 text-white rounded-xl transition-all shadow-lg">Add to Cart</button>
+              <button onClick={(e) => e.stopPropagation()} className="px-8 py-4 text-sm font-bold uppercase tracking-widest bg-primary hover:bg-primary/90 text-white rounded-xl transition-all shadow-[0_5px_20px_rgba(225,6,0,0.5)]">Buy Now</button>
             </div>
           </div>
         </div>
