@@ -40,9 +40,10 @@ export async function fetchHomeLaps(): Promise<Record<string, EventCard[]>> {
     return await response.json();
   } catch (error) {
     console.error("Home laps error:", error);
-    return {};
+    throw error; // Rethrow to allow component to handle it
   }
 }
+
 
 // ─── REST: Lap Context (raw data) ─────────────────────────────
 export async function fetchLapContext(lap: number) {

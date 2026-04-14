@@ -21,7 +21,7 @@ else:
     print("[WARN] GEMINI_API_KEY not found in .env — AI features will return fallback text")
 
 # ─── The Gemini Model ──────────────────────────────────────────
-MODEL_NAME = "gemini-2.0-flash"
+MODEL_NAME = "gemini-1.5-flash"
 
 # ─── System prompt — role + constraints ────────────────────────
 SYSTEM_PROMPT = """You are PitStop AI, an expert Formula 1 race strategist and commentator.
@@ -93,8 +93,8 @@ async def explain_why(lap_context: dict, target_event: str = "") -> dict:
 
     except Exception as e:
         print(f"[ERROR] Gemini API error: {e}")
-        # Fallback to simulated insight so the app remains free and functional!
-        simulated_explanation = f"Based on the telemetry for {lap_context.get('meeting', 'this race')}, the leaders are maintaining their pace to manage tire degradation. We should watch for the pit window opening in the next few laps as grip levels drop."
+        # Fallback to simulated insight so the app remains free and functional if key fails/errors out!
+        simulated_explanation = f"Analyzing '{target_event}': Based on the telemetry for {lap_context.get('meeting', 'this race')}, this event significantly altered the strategic landscape. The teams hold back data but expect aggressive tire strategy."
         
         return {
             "lap": lap_context.get("lap", 0),

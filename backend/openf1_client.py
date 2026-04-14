@@ -155,17 +155,32 @@ class OpenF1Client:
     # ── Lap info ──────────────────────────────────────────────────
 
     def fetch_total_laps(self):
-        """Get the total lap count for the session (from any driver)."""
+        """Get the total lap count for the session. Tries multiple drivers for resilience."""
         if not self.session_key:
             return
-        try:
-            res = self.client.get(f"/laps?session_key={self.session_key}&driver_number=1")
-            data = res.json()
-            if isinstance(data, list) and data:
-                self.total_laps = max(l.get("lap_number", 0) for l in data)
-                logger.info(f"Total laps: {self.total_laps}")
-        except Exception as e:
-            logger.error(f"Error fetching total laps: {e}")
+        
+        # Priority list of drivers to try (1 is usually championship leader, others are reliable)
+        drivers_to_try = [1]
+        
+        # Supplement with cached drivers if available
+        if self.drivers:
+            drivers_to_try.extend(list(self.drivers.keys())[:5])
+        
+        # Remove duplicates while preserving order
+        drivers_to_try = list(dict.fromkeys(drivers_to_try))
+
+        for dr_num in drivers_to_try:
+            try:
+                res = self.client.get(f"/laps?session_key={self.session_key}&driver_number={dr_num}")
+                data = res.json()
+                if isinstance(data, list) and data:
+                    self.total_laps = max(l.get("lap_number", 0) for l in data)
+                    logger.info(f"Total laps resolved to {self.total_laps} using driver {dr_num}")
+                    return
+            except Exception as e:
+                logger.error(f"Error fetching laps for driver {dr_num}: {e}")
+        
+        logger.warning(f"Could not resolve total laps for session {self.session_key}")
 
     def get_lap_timestamps(self) -> List[Dict[str, Any]]:
         """
@@ -361,14 +376,24 @@ class OpenF1Client:
             # Filter Race Control for this lap
             for rc in rc_events:
                 if rc.get("lap_number") == lap:
+                    category = rc.get("category", "Incident").upper()
+                    flag = rc.get("flag", "")
+                    
+                    # More specific type classification
+                    event_type = "warning"
+                    if flag:
+                        event_type = "warning"
+                    elif "PIT" in rc.get("message", "").upper():
+                        event_type = "pit"
+                    
                     lap_events.append({
                         "id": f"rc_{rc.get('event_id', lap)}",
                         "lap": lap,
-                        "title": rc.get("category", "Incident").upper(),
+                        "title": "FLAG" if flag else category,
                         "description": rc.get("message", ""),
-                        "type": "warning" if rc.get("flag") else "pit" if "PIT" in rc.get("message", "") else "overtake",
+                        "type": event_type,
                         "teamCarImage": get_car_img(rc.get("driver_number"), rc.get("message", "")),
-                        "impact": "HIGH" if rc.get("flag") in ["RED", "SAFETY CAR"] else "MEDIUM"
+                        "impact": "HIGH" if flag in ["RED", "SAFETY CAR"] else "MEDIUM"
                     })
 
             # Filter Pits for this lap

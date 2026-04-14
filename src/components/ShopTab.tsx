@@ -14,7 +14,9 @@ export default function ShopTab() {
   ];
 
   return (
-    <div className="flex flex-col gap-8 pb-8 font-body animate-in fade-in duration-500 text-left">
+    <div className="max-w-7xl mx-auto px-8 pt-10 flex flex-col gap-12 pb-32 font-body animate-in fade-in duration-500 text-left">
+      {/* Header */}
+      <h1 className="text-4xl font-headline font-black text-on-surface uppercase italic tracking-tight">F1 Shop</h1>
 
       {/* Exclusive Drops Section */}
       <section>
@@ -48,10 +50,10 @@ export default function ShopTab() {
 
       {/* Standard Items Section */}
       <section>
-        <h2 className="font-headline font-bold text-sm uppercase tracking-wider text-on-surface-variant mb-4 hidden">
-          Standard Items
+        <h2 className="font-headline font-bold text-lg uppercase tracking-wider text-on-surface mb-6">
+          Official Merchandise
         </h2>
-        <div className="grid grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           {standardItems.map(item => (
             <div key={item.id} className="bg-surface-low rounded-xl overflow-hidden border border-surface-high hover:border-surface-highest transition-colors cursor-pointer group flex flex-col">
               <div className="h-32 overflow-hidden bg-white/5 flex items-center justify-center p-2">
@@ -61,15 +63,16 @@ export default function ShopTab() {
                   className="w-full h-full object-contain group-hover:scale-110 transition-transform duration-300"
                 />
               </div>
-              <div className="p-3 flex-1 flex flex-col justify-between">
-                <h4 className="text-[11px] font-bold text-on-surface mb-2 line-clamp-2 leading-tight">
+              <div className="p-4 flex-1 flex flex-col justify-between">
+                <h4 className="text-sm font-bold text-on-surface mb-4 line-clamp-2 leading-tight">
                   {item.name}
                 </h4>
-                <div className="flex items-center justify-between mt-auto">
-                  <span className="text-sm font-bold text-on-surface-variant">{item.price}</span>
-                  <button className="w-6 h-6 rounded-full bg-primary/10 text-primary flex items-center justify-center hover:bg-primary hover:text-white transition-colors">
-                    <span className="text-xs">+</span>
-                  </button>
+                <div className="flex flex-col gap-3 mt-auto">
+                  <span className="text-lg font-black tracking-tight text-on-surface-variant mb-1">{item.price}</span>
+                  <div className="flex justify-between gap-3">
+                    <button onClick={(e) => e.stopPropagation()} className="flex-1 py-3 text-xs font-bold uppercase tracking-wider bg-surface border border-white/5 hover:bg-surface-high text-on-surface rounded-xl transition-all shadow-md">Add to Cart</button>
+                    <button onClick={(e) => e.stopPropagation()} className="flex-1 py-3 text-xs font-bold uppercase tracking-wider bg-primary hover:bg-primary/90 text-white rounded-xl transition-all shadow-[0_5px_15px_rgba(225,6,0,0.3)]">Buy Now</button>
+                  </div>
                 </div>
               </div>
             </div>

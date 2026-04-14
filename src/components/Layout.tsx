@@ -15,7 +15,9 @@ import { useLiveTrack } from '../lib/useLiveTrack';
 
 export default function Layout({ children, activeScreen, setActiveScreen, onTeamSelect }: LayoutProps) {
   const [isSidebarOpen, setIsSidebarOpen] = React.useState(false);
-  const { isConnected } = useLiveTrack();
+  
+  // Hardcoded to false for now unless a current race is strictly ongoing.
+  const isRaceOngoing = false; 
 
   return (
     <div className="min-h-screen flex flex-col bg-background relative z-0">
@@ -46,7 +48,7 @@ export default function Layout({ children, activeScreen, setActiveScreen, onTeam
           </span>
         </div>
         <div className="flex items-center gap-2">
-          {activeScreen === 'home' && isConnected && (
+          {activeScreen === 'home' && isRaceOngoing && (
             <div className="flex items-center gap-2 bg-error/10 px-3 py-1 rounded-full border border-error/20 mr-2">
               <span className="w-2 h-2 rounded-full bg-error animate-pulse" />
               <span className="font-headline font-bold text-[10px] uppercase tracking-tighter text-error">LIVE</span>
@@ -93,6 +95,7 @@ export default function Layout({ children, activeScreen, setActiveScreen, onTeam
         isOpen={isSidebarOpen} 
         onClose={() => setIsSidebarOpen(false)} 
         onTeamSelect={onTeamSelect}
+        onNavigate={(screen: any) => setActiveScreen(screen)}
       />
     </div>
   );

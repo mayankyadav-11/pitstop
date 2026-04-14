@@ -6,6 +6,7 @@ import Engage from './components/Engage';
 import Explore from './components/Explore';
 import Schedule from './components/Schedule';
 import TeamDetailsPage from './components/TeamDetailsPage';
+import ShopTab from './components/ShopTab';
 import { Screen, Team } from './types';
 
 export default function App() {
@@ -29,6 +30,8 @@ export default function App() {
         return <Schedule key="schedule" />;
       case 'team_details':
         return <TeamDetailsPage key="team_details" team={globalSelectedTeam!} onBack={() => setActiveScreen('home')} />;
+      case 'shop':
+        return <ShopTab key="shop" />;
       default:
         return <Home key="home" />;
     }
