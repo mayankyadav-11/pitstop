@@ -27,42 +27,42 @@ interface NextRace {
 }
 
 const TRACK_MAP: Record<string, string> = {
-  "budapest": "Budapest.png",
-  "hungaroring": "Budapest.png",
-  "silverstone": "Silverstone.png",
-  "marina bay": "Singapore.png",
-  "singapore": "Singapore.png",
-  "yas marina": "abu dhabi.png",
-  "abu dhabi": "abu dhabi.png",
-  "americas": "austin.png",
-  "austin": "austin.png",
-  "baku": "baku.png",
-  "barcelona": "barcelona.png",
-  "catalunya": "barcelona.png",
-  "las vegas": "las Vegas.png",
-  "lusail": "lusail.png",
-  "qatar": "lusail.png",
-  "madrid": "madrid.png",
-  "albert park": "melbourne.png",
-  "melbourne": "melbourne.png",
-  "hermanos rodriguez": "mexico city.png",
-  "mexico city": "mexico city.png",
-  "miami": "miami.png",
-  "monte carlo": "monte carlo.png",
-  "monaco": "monte carlo.png",
-  "gilles villeneuve": "montreal.png",
-  "montreal": "montreal.png",
-  "monza": "monza.png",
-  "interlagos": "sao Paulo.png",
-  "sao paulo": "sao Paulo.png",
-  "jose carlos pace": "sao Paulo.png",
-  "shanghai": "shanghai.png",
-  "spa": "spa.png",
-  "francorchamps": "spa.png",
-  "red bull ring": "spielberg.png",
-  "spielberg": "spielberg.png",
-  "suzuka": "suzuka.png",
-  "zandvoort": "zandvoort.png",
+  "budapest": "Budapest-1.png",
+  "hungaroring": "Budapest-1.png",
+  "silverstone": "Silverstone-1.png",
+  "marina bay": "Singapore-1.png",
+  "singapore": "Singapore-1.png",
+  "yas marina": "abu_dhabi-1.png",
+  "abu dhabi": "abu_dhabi-1.png",
+  "americas": "austin-1.png",
+  "austin": "austin-1.png",
+  "baku": "baku-1.png",
+  "barcelona": "barcelona-1.png",
+  "catalunya": "barcelona-1.png",
+  "las vegas": "las_Vegas-1.png",
+  "lusail": "lusail-1.png",
+  "qatar": "lusail-1.png",
+  "madrid": "madrid-1.png",
+  "albert park": "melbourne-1.png",
+  "melbourne": "melbourne-1.png",
+  "hermanos rodriguez": "mexico_city-1.png",
+  "mexico city": "mexico_city-1.png",
+  "miami": "miami-1.png",
+  "monte carlo": "monte_carlo-1.png",
+  "monaco": "monte_carlo-1.png",
+  "gilles villeneuve": "montreal-1.png",
+  "montreal": "montreal-1.png",
+  "monza": "monza-1.png",
+  "interlagos": "sao_Paulo-1.png",
+  "sao paulo": "sao_Paulo-1.png",
+  "jose carlos pace": "sao_Paulo-1.png",
+  "shanghai": "shanghai-1.png",
+  "spa": "spa-1.png",
+  "francorchamps": "spa-1.png",
+  "red bull ring": "spielberg-1.png",
+  "spielberg": "spielberg-1.png",
+  "suzuka": "suzuka-1.png",
+  "zandvoort": "zandvoort-1.png",
 };
 
 export default function Engage() {
@@ -150,11 +150,11 @@ export default function Engage() {
   useEffect(() => {
     // Override target to exactly May 4th at 01:30 AM local time as requested
     const target = new Date('2026-05-04T01:30:00+05:30');
-    
+
     const timer = setInterval(() => {
       const now = new Date();
       const diff = target.getTime() - now.getTime();
-      
+
       if (diff <= 0) {
         setTimeLeft({ d: 0, h: 0, m: 0 });
         return;
@@ -198,17 +198,17 @@ export default function Engage() {
 
   const meetingName = sessionInfo?.meetingName || 'Connecting...';
   const totalLaps = sessionInfo?.totalLaps || 0;
-  
+
   // Robust track image lookup
   const trackImage = useMemo(() => {
-    if (!nextRace?.circuit) return 'suzuka.png';
+    if (!nextRace?.circuit) return 'suzuka-1.png';
     const normalized = nextRace.circuit.toLowerCase();
     const key = Object.keys(TRACK_MAP).find(k => normalized.includes(k));
-    return key ? TRACK_MAP[key] : 'suzuka.png';
+    return key ? TRACK_MAP[key] : 'suzuka-1.png';
   }, [nextRace?.circuit]);
 
   return (
-    <motion.div 
+    <motion.div
       initial={{ opacity: 0, scale: 0.95 }}
       animate={{ opacity: 1, scale: 1 }}
       className="max-w-[1600px] mx-auto px-4 py-2 h-[calc(100vh-140px)] max-h-[900px] flex flex-col lg:flex-row gap-4 relative overflow-hidden"
@@ -218,84 +218,83 @@ export default function Engage() {
 
       {/* Left Column: Upcoming Grand Prix */}
       <div className="flex-1 flex flex-col bg-gradient-to-br from-white/10 to-transparent border border-white/10 rounded-3xl overflow-hidden shadow-2xl backdrop-blur-sm relative h-full">
-        
+
         {/* Top Header Row (Grand Prix Name on Left, Timer on Right) */}
         <div className="p-5 md:p-8 flex flex-col md:flex-row justify-between items-start md:items-center border-b border-white/10 shrink-0 bg-black/20 gap-4">
-            
-            {/* Left: Grand Prix Info */}
-            <div className="flex flex-col items-start text-left z-10 relative">
-              <div className="w-10 h-[2px] bg-primary mb-2" />
-              <span className="text-[10px] md:text-xs font-bold text-primary uppercase tracking-[0.4em] block mb-1 drop-shadow-md">Upcoming Grand Prix</span>
-              <h2 className="text-4xl md:text-5xl font-headline font-black text-white tracking-tighter uppercase italic leading-none drop-shadow-xl block">
-                MIAMI
-              </h2>
-              <p className="text-[10px] md:text-xs font-headline font-bold text-white/60 uppercase tracking-[0.4em] mt-2 drop-shadow-md">
-                Miami Int. Autodrome
-              </p>
-            </div>
 
-            {/* Right: Timer Dashboard */}
-            <div className="bg-black/40 backdrop-blur-xl rounded-2xl p-4 md:p-5 border border-white/10 shadow-[0_0_20px_rgba(0,0,0,0.5)] flex flex-col z-10 min-w-[280px]">
-              <div className="flex gap-4 justify-between md:justify-center md:gap-6">
-                 <div className="text-center">
-                  <p className="text-3xl md:text-4xl font-headline font-black text-white leading-none tracking-tighter">{timeLeft.d}</p>
-                  <p className="text-[9px] md:text-[10px] font-headline font-bold text-primary uppercase tracking-[0.3em] mt-1">Days</p>
-                </div>
-                <div className="text-center">
-                  <p className="text-3xl md:text-4xl font-headline font-black text-white leading-none tracking-tighter">{timeLeft.h}</p>
-                  <p className="text-[9px] md:text-[10px] font-headline font-bold text-primary uppercase tracking-[0.3em] mt-1">Hours</p>
-                </div>
-                <div className="text-center">
-                  <p className="text-3xl md:text-4xl font-headline font-black text-white leading-none tracking-tighter">{timeLeft.m}</p>
-                  <p className="text-[9px] md:text-[10px] font-headline font-bold text-primary uppercase tracking-[0.3em] mt-1">Mins</p>
-                </div>
+          {/* Left: Grand Prix Info */}
+          <div className="flex flex-col items-start text-left z-10 relative">
+            <div className="w-10 h-[2px] bg-primary mb-2" />
+            <span className="text-[10px] md:text-xs font-bold text-primary uppercase tracking-[0.4em] block mb-1 drop-shadow-md">Upcoming Grand Prix</span>
+            <h2 className="text-4xl md:text-5xl font-headline font-black text-white tracking-tighter uppercase italic leading-none drop-shadow-xl block">
+              MIAMI
+            </h2>
+            <p className="text-[10px] md:text-xs font-headline font-bold text-white/60 uppercase tracking-[0.4em] mt-2 drop-shadow-md">
+              Miami Int. Autodrome
+            </p>
+          </div>
+
+          {/* Right: Timer Dashboard */}
+          <div className="bg-black/40 backdrop-blur-xl rounded-2xl p-4 md:p-5 border border-white/10 shadow-[0_0_20px_rgba(0,0,0,0.5)] flex flex-col z-10 min-w-[280px]">
+            <div className="flex gap-4 justify-between md:justify-center md:gap-6">
+              <div className="text-center">
+                <p className="text-3xl md:text-4xl font-headline font-black text-white leading-none tracking-tighter">{timeLeft.d}</p>
+                <p className="text-[9px] md:text-[10px] font-headline font-bold text-primary uppercase tracking-[0.3em] mt-1">Days</p>
               </div>
-              <div className="mt-3 pt-3 border-t border-white/10 flex items-center justify-center gap-2">
-                <Timer className="w-3.5 h-3.5 text-primary animate-pulse flex-shrink-0" />
-                <span className="text-[9px] md:text-[10px] font-headline font-black text-white/90 uppercase tracking-widest italic whitespace-nowrap">Starts: May 4 • 1:30 AM</span>
+              <div className="text-center">
+                <p className="text-3xl md:text-4xl font-headline font-black text-white leading-none tracking-tighter">{timeLeft.h}</p>
+                <p className="text-[9px] md:text-[10px] font-headline font-bold text-primary uppercase tracking-[0.3em] mt-1">Hours</p>
+              </div>
+              <div className="text-center">
+                <p className="text-3xl md:text-4xl font-headline font-black text-white leading-none tracking-tighter">{timeLeft.m}</p>
+                <p className="text-[9px] md:text-[10px] font-headline font-bold text-primary uppercase tracking-[0.3em] mt-1">Mins</p>
               </div>
             </div>
+            <div className="mt-3 pt-3 border-t border-white/10 flex items-center justify-center gap-2">
+              <Timer className="w-3.5 h-3.5 text-primary animate-pulse flex-shrink-0" />
+              <span className="text-[9px] md:text-[10px] font-headline font-black text-white/90 uppercase tracking-widest italic whitespace-nowrap">Starts: May 4 • 1:30 AM</span>
+            </div>
+          </div>
         </div>
 
         {/* Bottom Split Content (Left: Leaderboard, Right: Map) */}
         <div className="flex-1 flex flex-col md:flex-row overflow-hidden relative">
-            
-            {/* Bottom-Left: Live Position Leaderboard (Top 10) */}
-            <div className="w-full md:w-[300px] lg:w-[340px] bg-black/30 border-r border-white/10 p-4 md:p-6 flex flex-col h-full overflow-hidden shrink-0 relative z-10 backdrop-blur-md">
-               <div className="flex items-center justify-between mb-4 pb-3 border-b border-white/10 shrink-0">
-                 <h3 className="text-white font-headline font-black text-sm md:text-base uppercase tracking-wider italic flex items-center gap-2">
-                   <div className="w-2 h-2 rounded-full bg-red-500 animate-pulse shadow-[0_0_8px_rgba(239,68,68,0.8)]" />
-                   Current Field
-                 </h3>
-                 <span className="text-[9px] font-headline font-bold text-white/40 uppercase tracking-widest">Top 10</span>
-               </div>
-               
-               <div className="flex-1 overflow-y-auto pr-2 custom-scrollbar space-y-3">
-                  {grid.length > 0 ? grid.slice(0, 10).map((driver) => (
-                    <GridCard key={driver.driverId || driver.pos} driver={driver} />
-                  )) : (
-                    <div className="h-full flex flex-col items-center justify-center text-center p-4">
-                      <div className="w-12 h-12 bg-white/5 rounded-full flex items-center justify-center mx-auto border border-white/5 mb-3">
-                        <User className="w-6 h-6 text-white/20" />
-                      </div>
-                      <p className="text-white/30 text-[10px] font-headline font-bold uppercase tracking-[0.3em]">Grid Data Pending</p>
-                    </div>
-                  )}
-               </div>
+
+          {/* Bottom-Left: Live Position Leaderboard (Top 10) */}
+          <div className="w-full md:w-[300px] lg:w-[340px] bg-black/30 border-r border-white/10 p-4 md:p-6 flex flex-col h-full overflow-hidden shrink-0 relative z-10 backdrop-blur-md">
+            <div className="flex items-center justify-between mb-4 pb-3 border-b border-white/10 shrink-0">
+              <h3 className="text-white font-headline font-black text-sm md:text-base uppercase tracking-wider italic flex items-center gap-2">
+                <div className="w-2 h-2 rounded-full bg-red-500 animate-pulse shadow-[0_0_8px_rgba(239,68,68,0.8)]" />
+                Current Field
+              </h3>
+              <span className="text-[9px] font-headline font-bold text-white/40 uppercase tracking-widest">Top 10</span>
             </div>
 
-            {/* Bottom-Right: Track Map Layer */}
-            <div className="flex-1 flex items-center justify-center p-6 relative overflow-hidden bg-transparent">
-                <img 
-                  src={`/tracks/miami.png`} 
-                  alt="Miami Circuit" 
-                  className="w-[95%] h-[95%] object-contain filter drop-shadow-[0_0_20px_rgba(255,255,255,0.7)] hover:scale-[1.02] transition-transform duration-700 pointer-events-none"
-                  style={{
-                    filter: "grayscale(100%) contrast(500%) invert(100%) drop-shadow(0 0 15px rgba(255,255,255,0.8))",
-                    mixBlendMode: "screen",
-                  }}
-                />
+            <div className="flex-1 overflow-y-auto pr-2 custom-scrollbar space-y-3">
+              {grid.length > 0 ? grid.slice(0, 10).map((driver) => (
+                <GridCard key={driver.driverId || driver.pos} driver={driver} />
+              )) : (
+                <div className="h-full flex flex-col items-center justify-center text-center p-4">
+                  <div className="w-12 h-12 bg-white/5 rounded-full flex items-center justify-center mx-auto border border-white/5 mb-3">
+                    <User className="w-6 h-6 text-white/20" />
+                  </div>
+                  <p className="text-white/30 text-[10px] font-headline font-bold uppercase tracking-[0.3em]">Grid Data Pending</p>
+                </div>
+              )}
             </div>
+          </div>
+
+          {/* Bottom-Right: Track Map Layer */}
+          <div className="flex-1 flex items-center justify-center p-6 relative overflow-hidden bg-transparent">
+            <img
+              src={`/track/${trackImage}`}
+              alt={nextRace?.circuit || 'Circuit Map'}
+              className="w-full h-full object-contain scale-[1.15] opacity-90 hover:opacity-100 hover:scale-[1.20] transition-all duration-700 pointer-events-none"
+              style={{
+                filter: "drop-shadow(0 0 25px rgba(255,255,255,0.15))",
+              }}
+            />
+          </div>
         </div>
       </div>
 
@@ -324,15 +323,15 @@ export default function Engage() {
 
         <div className="p-6 bg-black/40 backdrop-blur-2xl border-t border-white/10">
           <div className="flex gap-4 p-2.5 bg-black/40 rounded-2xl border border-white/10 focus-within:border-primary/50 focus-within:ring-4 focus-within:ring-primary/10 transition-all duration-500 shadow-inner">
-            <input 
-              type="text" 
+            <input
+              type="text"
               value={input}
               onChange={(e) => setInput(e.target.value)}
               onKeyDown={handleKeyDown}
-              placeholder="Message the paddock..." 
+              placeholder="Message the paddock..."
               className="bg-transparent border-none focus:ring-0 flex-1 text-white placeholder-white/40 px-4 text-[15px] outline-none font-medium"
             />
-            <button 
+            <button
               onClick={handleSend}
               className="bg-primary hover:bg-primary/80 text-white px-8 py-3.5 rounded-xl font-headline font-black uppercase tracking-widest text-xs transition-all shadow-[0_4px_15px_rgba(225,6,0,0.4)] flex items-center justify-center"
             >
@@ -361,9 +360,8 @@ function ChatMessage({ msg }: { msg: typeof MESSAGES[0] }) {
           <span className="text-[9px] text-white/30 font-bold uppercase tracking-widest">{msg.time}</span>
           {msg.isMe && <span className="text-[11px] font-black uppercase tracking-widest text-white/80">{msg.handle}</span>}
         </div>
-        <p className={`text-white/95 leading-relaxed text-[15px] px-6 py-4 rounded-3xl shadow-lg transition-all border ${
-          msg.isMe ? 'bg-gradient-to-r from-primary to-[#ff3b3b] text-left rounded-tr-sm border-primary/30' : 'bg-gradient-to-r from-white/10 to-white/5 rounded-tl-sm border-white/10 backdrop-blur-md'
-        }`}>
+        <p className={`text-white/95 leading-relaxed text-[15px] px-6 py-4 rounded-3xl shadow-lg transition-all border ${msg.isMe ? 'bg-gradient-to-r from-primary to-[#ff3b3b] text-left rounded-tr-sm border-primary/30' : 'bg-gradient-to-r from-white/10 to-white/5 rounded-tl-sm border-white/10 backdrop-blur-md'
+          }`}>
           {msg.text}
         </p>
       </div>
@@ -372,8 +370,8 @@ function ChatMessage({ msg }: { msg: typeof MESSAGES[0] }) {
 }
 
 function GridCard({ driver }: { driver: GridDriver }) {
-  const localDriver = DRIVERS.find(d => 
-    d.name.toLowerCase().includes(driver.name.toLowerCase()) || 
+  const localDriver = DRIVERS.find(d =>
+    d.name.toLowerCase().includes(driver.name.toLowerCase()) ||
     driver.name.toLowerCase().includes(d.name.toLowerCase())
   );
 
@@ -382,12 +380,12 @@ function GridCard({ driver }: { driver: GridDriver }) {
       <div className="w-8 flex justify-center shrink-0">
         <span className="text-white font-headline font-black text-2xl italic leading-none">{driver.pos}</span>
       </div>
-      
+
       <div className="w-10 h-10 rounded-full border border-white/10 overflow-hidden bg-black/40 shadow-inner relative shrink-0">
-        <img 
-          src={localDriver?.avatar || `https://api.dicebear.com/7.x/avataaars/svg?seed=${driver.driverId}`} 
-          className="w-full h-full object-cover" 
-          alt={driver.name} 
+        <img
+          src={localDriver?.avatar || `https://api.dicebear.com/7.x/avataaars/svg?seed=${driver.driverId}`}
+          className="w-full h-full object-cover"
+          alt={driver.name}
         />
         <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
       </div>
@@ -395,8 +393,8 @@ function GridCard({ driver }: { driver: GridDriver }) {
       <div className="flex-1 min-w-0">
         <h4 className="text-white font-headline font-black text-sm uppercase truncate tracking-tight mb-0.5 group-hover:text-primary transition-colors">{driver.name}</h4>
         <div className="flex items-center gap-2">
-           <div className="w-2 h-0.5 rounded-full" style={{ backgroundColor: localDriver?.color || '#E10600' }} />
-           <p className="text-white/40 text-[9px] font-headline font-bold uppercase tracking-widest truncate">{driver.team}</p>
+          <div className="w-2 h-0.5 rounded-full" style={{ backgroundColor: localDriver?.color || '#E10600' }} />
+          <p className="text-white/40 text-[9px] font-headline font-bold uppercase tracking-widest truncate">{driver.team}</p>
         </div>
       </div>
     </div>

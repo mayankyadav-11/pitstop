@@ -8,22 +8,22 @@ const spotlightNews = [
   {
     id: 1,
     title: "Ferrari reveals aggressive aero upgrades for Singapore",
-    url: "https://images.unsplash.com/photo-1541446700810-721fb65d6c29?auto=format&fit=crop&q=80&w=800",
+    url: "/spotlights/Ferrari reveals aggressive aero upgrades for Singapore.jpeg",
   },
   {
     id: 2,
     title: "Verstappen dominates qualifying with blistering lap",
-    url: "https://images.unsplash.com/photo-1536611413867-b87515d9da63?auto=format&fit=crop&q=80&w=800",
+    url: "/spotlights/Verstappen dominates qualifying with blistering lap.jpeg",
   },
   {
     id: 3,
     title: "Behind the scenes: McLaren's 1.8s pit stop",
-    url: "https://images.unsplash.com/photo-1580274070966-28413de7e951?auto=format&fit=crop&q=80&w=800",
+    url: "/spotlights/Behind the scenes McLaren's 1.8s pit stop.jpeg",
   },
   {
     id: 4,
     title: "Hamilton vs Alonso: The ultimate onboard perspective",
-    url: "https://images.unsplash.com/photo-1508266497255-7da7574cc47b?auto=format&fit=crop&q=80&w=800",
+    url: "/spotlights/Hamilton vs Alonso The ultimate onboard perspective.jpeg",
   }
 ];
 
@@ -157,8 +157,8 @@ export default function Home() {
                 >
                   {visibleNews.map((news) => (
                     <div key={news.id} className="relative rounded-[32px] overflow-hidden border border-white/5 group aspect-video bg-surface-highest shadow-[0_10px_30px_rgba(0,0,0,0.5)]">
-                      <img src={news.url} alt={news.title} className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-105 opacity-80 group-hover:opacity-100" />
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-transparent flex flex-col justify-end p-8">
+                      <img src={news.url} alt={news.title} className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-105 opacity-90 group-hover:opacity-100" />
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/40 to-transparent flex flex-col justify-end p-8">
                          <h3 className="text-xl md:text-2xl lg:text-3xl font-headline font-black text-white uppercase tracking-tight leading-none mb-2 transform translate-y-2 group-hover:translate-y-0 transition-transform duration-500">{news.title}</h3>
                          <div className="w-10 h-1 bg-primary rounded-full mt-2 opacity-0 group-hover:opacity-100 transition-opacity duration-500 delay-100"></div>
                       </div>
