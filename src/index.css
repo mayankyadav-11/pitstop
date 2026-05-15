@@ -11,19 +11,19 @@
   --color-surface-high: #252525;
   --color-surface-highest: #333333;
   --color-surface-bright: #444444;
-  
+
   --color-primary: #e10600;
   --color-primary-container: #ff1e1e;
   --color-on-primary: #ffffff;
-  
+
   --color-tertiary: #ffffff;
   --color-tertiary-container: #f0f0f0;
-  
+
   --color-on-surface: #ffffff;
   --color-on-surface-variant: #cccccc;
-  
+
   --color-error: #ff0000;
-  
+
   --radius-xl: 1.5rem;
 }
 
@@ -50,6 +50,7 @@
 .hide-scrollbar::-webkit-scrollbar {
   display: none;
 }
+
 .hide-scrollbar {
   -ms-overflow-style: none;
   scrollbar-width: none;
@@ -59,12 +60,15 @@
 .minimal-scrollbar::-webkit-scrollbar {
   width: 1px;
 }
+
 .minimal-scrollbar::-webkit-scrollbar-track {
   background: transparent;
 }
+
 .minimal-scrollbar::-webkit-scrollbar-thumb {
   background: rgba(255, 255, 255, 0.3);
 }
+
 .minimal-scrollbar {
   scrollbar-width: thin;
   scrollbar-color: rgba(255, 255, 255, 0.3) transparent;

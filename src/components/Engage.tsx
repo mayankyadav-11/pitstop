@@ -92,32 +92,10 @@ export default function Engage({ user }: { user?: SupabaseUser | null }) {
   const chatRef = useRef<HTMLDivElement>(null);
   const { currentLap, sessionInfo, isConnected } = useLiveTrack();
 
-  // ─── Load existing messages & subscribe to Realtime ─────────────
+  // ─── Subscribe to Realtime only (fresh chat each visit) ─────────
   useEffect(() => {
-    // 1. Fetch last 50 messages from Supabase
-    const fetchMessages = async () => {
-      const { data, error } = await supabase
-        .from('messages')
-        .select('*')
-        .order('created_at', { ascending: true })
-        .limit(50);
-
-      if (data && !error) {
-        const mapped: ChatMsg[] = data.map((row: any) => ({
-          id: row.id,
-          user: row.user_name,
-          handle: row.handle,
-          time: new Date(row.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-          text: row.text,
-          avatar: row.avatar_url,
-          isMe: user ? row.user_id === user.id : false,
-          initials: row.user_name.substring(0, 2).toUpperCase()
-        }));
-        setMessages(mapped);
-      }
-    };
-
-    fetchMessages();
+    // Start with empty chat — only show messages that arrive while the page is open
+    setMessages([]);
 
     // 2. Subscribe to new inserts via Supabase Realtime
     const channel = supabase
