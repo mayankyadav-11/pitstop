@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { X } from 'lucide-react';
+import { X, ChevronDown } from 'lucide-react';
 import ShopTab from './ShopTab';
 import TeamsTab from './TeamsTab';
 import { Team } from '../types';
@@ -54,9 +54,15 @@ export default function Sidebar({ isOpen, onClose, onTeamSelect, onNavigate }: S
               className="w-full py-4 px-6 flex justify-between items-center text-left font-headline font-black text-xl uppercase tracking-wider hover:bg-surface-high/80 transition-all text-on-surface hover:text-primary"
             >
               Teams
-              <span className="text-2xl leading-none font-light text-on-surface-variant">{teamsOpen ? '−' : '+'}</span>
+              <ChevronDown className={`w-6 h-6 text-on-surface-variant transition-transform duration-300 ${teamsOpen ? 'rotate-180' : ''}`} />
             </button>
-            <div className={`overflow-hidden transition-all duration-300 ${teamsOpen ? 'max-h-[100vh] p-4 overflow-y-auto' : 'max-h-0'}`}>
+            <div 
+              className={`overflow-hidden transition-all duration-300 ${teamsOpen ? 'max-h-[60vh] p-4 overflow-y-auto hide-scrollbar' : 'max-h-0'}`}
+              style={{
+                WebkitMaskImage: teamsOpen ? 'linear-gradient(to bottom, black 85%, transparent 100%)' : 'none',
+                maskImage: teamsOpen ? 'linear-gradient(to bottom, black 85%, transparent 100%)' : 'none'
+              }}
+            >
               <TeamsTab 
                 onTeamClick={(team) => {
                   onClose();

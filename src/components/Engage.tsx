@@ -270,7 +270,13 @@ export default function Engage() {
               <span className="text-[9px] font-headline font-bold text-white/40 uppercase tracking-widest">Top 10</span>
             </div>
 
-            <div className="flex-1 overflow-y-auto pr-2 custom-scrollbar space-y-3">
+            <div 
+              className="flex-1 overflow-y-auto hide-scrollbar space-y-3 pb-4"
+              style={{
+                WebkitMaskImage: 'linear-gradient(to bottom, black 85%, transparent 100%)',
+                maskImage: 'linear-gradient(to bottom, black 85%, transparent 100%)'
+              }}
+            >
               {grid.length > 0 ? grid.slice(0, 10).map((driver) => (
                 <GridCard key={driver.driverId || driver.pos} driver={driver} />
               )) : (
