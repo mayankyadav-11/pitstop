@@ -65,8 +65,24 @@ const TRACK_MAP: Record<string, string> = {
   "zandvoort": "zandvoort-1.png",
 };
 
-export default function Engage() {
-  const [messages, setMessages] = useState(MESSAGES);
+import { User as SupabaseUser } from '@supabase/supabase-js';
+import { supabase } from '../lib/supabase';
+
+// Shape for messages stored in Supabase
+interface ChatMsg {
+  id: string;
+  user: string;
+  handle: string;
+  time: string;
+  text: string;
+  avatar?: string;
+  isMe?: boolean;
+  isMod?: boolean;
+  initials?: string;
+}
+
+export default function Engage({ user }: { user?: SupabaseUser | null }) {
+  const [messages, setMessages] = useState<ChatMsg[]>([]);
   const [input, setInput] = useState('');
   const [nextRace, setNextRace] = useState<NextRace | null>(null);
   const [podium, setPodium] = useState<RacePodium[]>([]);
@@ -75,6 +91,61 @@ export default function Engage() {
   const [timeLeft, setTimeLeft] = useState<{ d: number; h: number; m: number }>({ d: 0, h: 0, m: 0 });
   const chatRef = useRef<HTMLDivElement>(null);
   const { currentLap, sessionInfo, isConnected } = useLiveTrack();
+
+  // ─── Load existing messages & subscribe to Realtime ─────────────
+  useEffect(() => {
+    // 1. Fetch last 50 messages from Supabase
+    const fetchMessages = async () => {
+      const { data, error } = await supabase
+        .from('messages')
+        .select('*')
+        .order('created_at', { ascending: true })
+        .limit(50);
+
+      if (data && !error) {
+        const mapped: ChatMsg[] = data.map((row: any) => ({
+          id: row.id,
+          user: row.user_name,
+          handle: row.handle,
+          time: new Date(row.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+          text: row.text,
+          avatar: row.avatar_url,
+          isMe: user ? row.user_id === user.id : false,
+          initials: row.user_name.substring(0, 2).toUpperCase()
+        }));
+        setMessages(mapped);
+      }
+    };
+
+    fetchMessages();
+
+    // 2. Subscribe to new inserts via Supabase Realtime
+    const channel = supabase
+      .channel('public:messages')
+      .on(
+        'postgres_changes',
+        { event: 'INSERT', schema: 'public', table: 'messages' },
+        (payload: any) => {
+          const row = payload.new;
+          const newMsg: ChatMsg = {
+            id: row.id,
+            user: row.user_name,
+            handle: row.handle,
+            time: new Date(row.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+            text: row.text,
+            avatar: row.avatar_url,
+            isMe: user ? row.user_id === user.id : false,
+            initials: row.user_name.substring(0, 2).toUpperCase()
+          };
+          setMessages(prev => [...prev, newMsg]);
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [user]);
 
   // ─── Fetch Next & Last Race Details ────────────────────────────
   useEffect(() => {
@@ -170,17 +241,30 @@ export default function Engage() {
     return () => clearInterval(timer);
   }, []);
 
-  const handleSend = () => {
+  const handleSend = async () => {
     if (!input.trim()) return;
-    const newMsg = {
-      id: Date.now().toString(),
-      user: 'PitCrew_88',
-      handle: '@PitCrew_88',
-      time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-      text: input,
-      isMe: true
-    };
-    setMessages([...messages, newMsg]);
+    if (!user) {
+      alert('Please log in to send messages!');
+      return;
+    }
+    
+    const displayName = user.user_metadata?.full_name || user.email?.split('@')[0] || 'F1_Fan';
+    const handle = `@${displayName.replace(/\s+/g, '')}`;
+
+    // Insert into Supabase — the realtime subscription will add it to the UI
+    const { error } = await supabase.from('messages').insert({
+      user_id: user.id,
+      user_name: displayName,
+      handle: handle,
+      avatar_url: user.user_metadata?.avatar_url || null,
+      text: input
+    });
+
+    if (error) {
+      console.error('Failed to send message:', error);
+      alert('Failed to send message. Please try again.');
+    }
+    
     setInput('');
   };
 

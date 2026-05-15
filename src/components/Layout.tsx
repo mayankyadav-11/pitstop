@@ -4,16 +4,20 @@ import { Screen, Team } from '../types';
 import Sidebar from './Sidebar';
 import TeamsTab from './TeamsTab';
 
+import { User as SupabaseUser } from '@supabase/supabase-js';
+import { supabase } from '../lib/supabase';
+
 interface LayoutProps {
   children: React.ReactNode;
   activeScreen: Screen;
   setActiveScreen: (screen: Screen) => void;
   onTeamSelect?: (team: Team) => void;
+  user?: SupabaseUser | null;
 }
 
 import { useLiveTrack } from '../lib/useLiveTrack';
 
-export default function Layout({ children, activeScreen, setActiveScreen, onTeamSelect }: LayoutProps) {
+export default function Layout({ children, activeScreen, setActiveScreen, onTeamSelect, user }: LayoutProps) {
   const [isSidebarOpen, setIsSidebarOpen] = React.useState(false);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
@@ -104,10 +108,23 @@ export default function Layout({ children, activeScreen, setActiveScreen, onTeam
 
         {/* Right: Login Button & Mobile Menu */}
         <div className="flex items-center gap-4">
-          <button className="hidden sm:flex items-center gap-2 px-6 py-2.5 rounded-full bg-white text-black font-bold uppercase text-xs tracking-wider hover:bg-gray-200 transition-all shadow-lg hover:shadow-xl hover:scale-105 active:scale-95">
-            <User className="w-4 h-4" />
-            Login
-          </button>
+          {user ? (
+            <button 
+              onClick={async () => await supabase.auth.signOut()}
+              className="hidden sm:flex items-center gap-2 px-6 py-2.5 rounded-full bg-white/10 text-white font-bold uppercase text-xs tracking-wider hover:bg-error/20 hover:text-error transition-all shadow-lg hover:shadow-xl hover:scale-105 active:scale-95 border border-white/5"
+            >
+              <User className="w-4 h-4" />
+              Logout
+            </button>
+          ) : (
+            <button 
+              onClick={() => setActiveScreen('login')}
+              className="hidden sm:flex items-center gap-2 px-6 py-2.5 rounded-full bg-white text-black font-bold uppercase text-xs tracking-wider hover:bg-gray-200 transition-all shadow-lg hover:shadow-xl hover:scale-105 active:scale-95"
+            >
+              <User className="w-4 h-4" />
+              Login
+            </button>
+          )}
           
           {/* Mobile Hamburger */}
           <button 

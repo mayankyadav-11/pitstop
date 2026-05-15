@@ -1,4 +1,4 @@
-export type Screen = 'home' | 'engage' | 'schedule' | 'explore' | 'team_details' | 'shop';
+export type Screen = 'home' | 'engage' | 'schedule' | 'explore' | 'team_details' | 'shop' | 'login';
 
 export interface Team {
   id: string;
