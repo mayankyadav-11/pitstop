@@ -195,10 +195,11 @@ export default function Engage({ user }: { user?: SupabaseUser | null }) {
       });
   }, []);
 
-  // ─── Countdown Logic ─────────────────────────────────────────────
+  // ─── Countdown Logic (driven by API data) ──────────────────────────
   useEffect(() => {
-    // Override target to exactly May 4th at 01:30 AM local time as requested
-    const target = new Date('2026-05-04T01:30:00+05:30');
+    if (!nextRace) return;
+
+    const target = new Date(`${nextRace.date}T${nextRace.time}`);
 
     const timer = setInterval(() => {
       const now = new Date();
@@ -217,7 +218,7 @@ export default function Engage({ user }: { user?: SupabaseUser | null }) {
     }, 1000);
 
     return () => clearInterval(timer);
-  }, []);
+  }, [nextRace]);
 
   const handleSend = async () => {
     if (!input.trim()) return;
@@ -289,10 +290,10 @@ export default function Engage({ user }: { user?: SupabaseUser | null }) {
             <div className="w-10 h-[2px] bg-primary mb-2" />
             <span className="text-[10px] md:text-xs font-bold text-primary uppercase tracking-[0.4em] block mb-1 drop-shadow-md">Upcoming Grand Prix</span>
             <h2 className="text-4xl md:text-5xl font-headline font-black text-white tracking-tighter uppercase italic leading-none drop-shadow-xl block">
-              MIAMI
+              {nextRace ? nextRace.name.replace(' Grand Prix', '') : 'Loading...'}
             </h2>
             <p className="text-[10px] md:text-xs font-headline font-bold text-white/60 uppercase tracking-[0.4em] mt-2 drop-shadow-md">
-              Miami Int. Autodrome
+              {nextRace?.circuit || 'Fetching circuit...'}
             </p>
           </div>
 
@@ -314,7 +315,9 @@ export default function Engage({ user }: { user?: SupabaseUser | null }) {
             </div>
             <div className="mt-3 pt-3 border-t border-white/10 flex items-center justify-center gap-2">
               <Timer className="w-3.5 h-3.5 text-primary animate-pulse flex-shrink-0" />
-              <span className="text-[9px] md:text-[10px] font-headline font-black text-white/90 uppercase tracking-widest italic whitespace-nowrap">Starts: May 4 • 1:30 AM</span>
+              <span className="text-[9px] md:text-[10px] font-headline font-black text-white/90 uppercase tracking-widest italic whitespace-nowrap">
+                {nextRace ? `Starts: ${new Date(`${nextRace.date}T${nextRace.time}`).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })} • ${new Date(`${nextRace.date}T${nextRace.time}`).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true })}` : 'Loading...'}
+              </span>
             </div>
           </div>
         </div>
