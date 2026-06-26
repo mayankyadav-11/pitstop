@@ -7,7 +7,7 @@ import { EventCard } from "../types";
  * Handles REST calls (/api/why) and Socket.IO (live track).
  */
 
-const API_BASE = "http://localhost:8000";
+const API_BASE = import.meta.env.VITE_API_BASE_URL || "http://localhost:8000";
 
 // ─── REST: "Why?" Button ───────────────────────────────────────
 export async function fetchWhyExplanation(lap: number, event: string = ""): Promise<{

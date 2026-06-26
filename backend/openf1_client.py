@@ -315,6 +315,94 @@ class OpenF1Client:
             logger.error(f"Error fetching pits: {e}")
             return []
 
+    # ── Driver standings (official race positions) ────────────────
+
+    def get_driver_standings_at(self, date_from: str, date_to: str) -> Dict[int, Dict[str, Any]]:
+        """
+        Fetch official race positions (P1-P20) from OpenF1 /position endpoint.
+        Returns {driver_number: {"position": int}} for the latest entry per driver.
+        """
+        if not self.session_key:
+            return {}
+        try:
+            res = self.client.get(
+                f"/position?session_key={self.session_key}"
+                f"&date>={date_from}&date<{date_to}"
+            )
+            data = res.json()
+            if not isinstance(data, list):
+                return {}
+            # Keep latest per driver
+            standings: Dict[int, Dict[str, Any]] = {}
+            for entry in data:
+                num = entry.get("driver_number")
+                pos = entry.get("position")
+                if num is not None and pos is not None:
+                    standings[num] = {"position": pos}
+            return standings
+        except Exception as e:
+            logger.error(f"Error fetching standings: {e}")
+            return {}
+
+    def get_driver_intervals_at(self, date_from: str, date_to: str) -> Dict[int, Dict[str, Any]]:
+        """
+        Fetch driver intervals (gap to leader and interval to car ahead) from OpenF1 /intervals endpoint.
+        Returns {driver_number: {"gap_to_leader": float | None, "interval": float | None}} for the latest entry per driver.
+        """
+        if not self.session_key:
+            return {}
+        try:
+            res = self.client.get(
+                f"/intervals?session_key={self.session_key}"
+                f"&date>={date_from}&date<{date_to}"
+            )
+            data = res.json()
+            if not isinstance(data, list):
+                return {}
+            # Keep latest per driver
+            intervals: Dict[int, Dict[str, Any]] = {}
+            for entry in data:
+                num = entry.get("driver_number")
+                gap = entry.get("gap_to_leader")
+                inter = entry.get("interval")
+                if num is not None:
+                    intervals[num] = {"gap_to_leader": gap, "interval": inter}
+            return intervals
+        except Exception as e:
+            logger.error(f"Error fetching intervals: {e}")
+            return {}
+
+    # ── Session status derivation ────────────────────────────────
+
+    def derive_session_status(self, date_from: str, date_to: str) -> str:
+        """
+        Derive the current session status from race control messages.
+        Returns one of: 'pre_race', 'started', 'safety_car', 'vsc', 'red_flag', 'finished'.
+        """
+        rc_events = self.get_race_control(date_to=date_to)
+        if not rc_events:
+            return "pre_race"
+
+        # Walk backwards through events to find the latest status-changing event
+        for ev in reversed(rc_events):
+            flag = ev.get("flag", "").upper()
+            msg = (ev.get("message", "") or "").upper()
+            category = (ev.get("category", "") or "").upper()
+
+            if "CHEQUERED" in msg or "CHEQUERED" in flag:
+                return "finished"
+            if flag == "RED":
+                return "red_flag"
+            if "SAFETY CAR" in msg and "VIRTUAL" not in msg:
+                return "safety_car"
+            if "VIRTUAL SAFETY CAR" in msg or flag == "VSC":
+                return "vsc"
+            if "GREEN" in flag or "GREEN" in msg:
+                return "started"
+
+        # If we have race control events but none are status-changing, race is running
+        return "started"
+
     def get_lap_context(self, lap_number: int) -> Dict[str, Any]:
         """Build AI-ready context for a specific lap."""
         # Filter session events for the specific lap

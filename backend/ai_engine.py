@@ -22,7 +22,7 @@ else:
     print("[WARN] GEMINI_API_KEY not found in .env — AI features will return fallback text")
 
 # ─── The Gemini Model ──────────────────────────────────────────
-MODEL_NAME = "gemini-1.5-flash"
+MODEL_NAME = "gemini-2.5-flash"
 
 # ─── System prompt — role + constraints ────────────────────────
 SYSTEM_PROMPT = """You are PitStop AI, an expert Formula 1 race strategist and commentator.
@@ -94,8 +94,8 @@ async def explain_why(lap_context: dict, target_event: str = "") -> dict:
 
     except Exception as e:
         print(f"[ERROR] Gemini API error: {e}")
-        # Fallback to simulated insight so the app remains free and functional if key fails/errors out!
-        simulated_explanation = f"Analyzing '{target_event}': Based on the telemetry for {lap_context.get('meeting', 'this race')}, this event significantly altered the strategic landscape. The teams hold back data but expect aggressive tire strategy."
+        # Fallback to a highly relevant simulated explanation based on event description
+        simulated_explanation = generate_dynamic_fallback(target_event, lap_context.get("lap", 0))
         
         return {
             "lap": lap_context.get("lap", 0),
@@ -138,3 +138,36 @@ If explaining a pit stop, tell us why they chose this lap. If explaining a flag 
 Respond with a unique insight that hasn't been shared for other laps."""
 
     return prompt
+
+
+def generate_dynamic_fallback(target_event: str, lap: int) -> str:
+    evt = target_event.lower()
+    
+    # Extract driver name
+    driver = "The driver"
+    for d in ["norris", "verstappen", "antonelli", "sainz", "hamilton", "leclerc", "perez", "piastri", "russell", "alonso", "tsunoda", "gasly", "stroll", "albon", "magnussen", "hulkenberg", "bottas", "zhou", "sargeant", "ricciardo"]:
+        if d in evt:
+            driver = d.capitalize()
+            break
+            
+    if "pit" in evt or "box" in evt or "tyre" in evt or "tire" in evt or "soft" in evt or "medium" in evt or "hard" in evt:
+        return f"{driver} entered the pits for fresh tires to optimize track position. This compound change aims to unlock better pace and secure an advantage in the upcoming stint."
+    elif "fastest" in evt:
+        return f"{driver} registered the fastest lap using low fuel weight and clean air. This adds an extra point to the championship tally and showcases supreme car balance."
+    elif "yellow" in evt:
+        return "A yellow flag has neutralized this sector due to a track hazard. Drivers must decrease speed and hold their positions until green conditions are restored."
+    elif "green" in evt:
+        return "The track is clear and green flag racing has resumed. Drivers are back to full throttle, pushing their power units to defend or attempt late-braking moves."
+    elif "overtake" in evt or "passed" in evt or "pass" in evt:
+        return f"{driver} completed a crucial overtake by exploiting a grip advantage on corner exit. The move shifts momentum and forces the rival team to adapt their strategy."
+    elif "retire" in evt or "engine" in evt or "stopped" in evt:
+        return f"{driver} suffered a critical failure, forcing them to retire the car. This sudden loss of power disrupts the team's championship points target."
+    elif "lock" in evt:
+        return f"{driver} locked up the front tires, causing a flat-spot and tyre degradation. This error will lead to handling vibrations and may force an early stop."
+    elif "drs" in evt:
+        return f"{driver} is now within the 1-second DRS activation zone behind the lead car. The open rear wing flap provides a top-speed boost for an attack."
+    elif "safety car" in evt or "sc" in evt:
+        return "The safety car deployment groups the field and neutralizes all time gaps. This triggers a flurry of strategic decisions as teams calculate pit stop windows."
+    
+    return f"This event on Lap {lap} has altered the strategic landscape. The teams are analyzing telemetry data to adapt their fuel management and tyre wear strategies."
+

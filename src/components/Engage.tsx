@@ -3,6 +3,7 @@ import { Share2, MessagesSquare, Send, Trophy, MapPin, ChevronRight, User, Timer
 import { MESSAGES, DRIVERS } from '../constants';
 import { useState, useRef, useEffect, useMemo } from 'react';
 import { useLiveTrack } from '../lib/useLiveTrack';
+import TrackMap from './TrackMap';
 
 interface RacePodium {
   pos: number;
@@ -226,7 +227,7 @@ export default function Engage({ user }: { user?: SupabaseUser | null }) {
       alert('Please log in to send messages!');
       return;
     }
-    
+
     const displayName = user.user_metadata?.full_name || user.email?.split('@')[0] || 'F1_Fan';
     const handle = `@${displayName.replace(/\s+/g, '')}`;
 
@@ -243,7 +244,7 @@ export default function Engage({ user }: { user?: SupabaseUser | null }) {
       console.error('Failed to send message:', error);
       alert('Failed to send message. Please try again.');
     }
-    
+
     setInput('');
   };
 
@@ -335,7 +336,7 @@ export default function Engage({ user }: { user?: SupabaseUser | null }) {
               <span className="text-[9px] font-headline font-bold text-white/40 uppercase tracking-widest">Top 10</span>
             </div>
 
-            <div 
+            <div
               className="flex-1 overflow-y-auto hide-scrollbar space-y-3 pb-4"
               style={{
                 WebkitMaskImage: 'linear-gradient(to bottom, black 85%, transparent 100%)',
@@ -356,15 +357,8 @@ export default function Engage({ user }: { user?: SupabaseUser | null }) {
           </div>
 
           {/* Bottom-Right: Track Map Layer */}
-          <div className="flex-1 flex items-center justify-center p-6 relative overflow-hidden bg-transparent">
-            <img
-              src={`/track/${trackImage}`}
-              alt={nextRace?.circuit || 'Circuit Map'}
-              className="w-full h-full object-contain scale-[1.15] opacity-90 hover:opacity-100 hover:scale-[1.20] transition-all duration-700 pointer-events-none"
-              style={{
-                filter: "drop-shadow(0 0 25px rgba(255,255,255,0.15))",
-              }}
-            />
+          <div className="flex-1 flex flex-col p-4 relative overflow-hidden bg-transparent h-full">
+            <TrackMap upcomingCircuit={nextRace?.circuit || nextRace?.name || ""} />
           </div>
         </div>
       </div>

@@ -4,7 +4,9 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "vite --port=3000 --host=0.0.0.0",
+    "frontend": "vite --port=3000 --host=0.0.0.0",
+    "backend": "venv\\Scripts\\python -m uvicorn backend.main:app --reload --port 8000",
+    "dev": "concurrently \"npm run backend\" \"npm run frontend\"",
     "build": "vite build",
     "preview": "vite preview",
     "clean": "rm -rf dist",

@@ -11,6 +11,7 @@ export interface CircuitData {
   lengthKm: number;
   svgPath: string;
   gridBox: string; // For the tooltip
+  trackImage?: string; // PNG filename in /track/ directory
 }
 
 // ── Default Placeholder Track (Oval)
@@ -43,6 +44,7 @@ export const TRACKS: Record<string, CircuitData> = {
     lengthKm: 5.278,
     svgPath: PLACEHOLDER_PATH,
     gridBox: "0 0 550 500",
+    trackImage: "melbourne-1.png",
   },
   // 4. Japan
   suzuka: {
@@ -52,6 +54,7 @@ export const TRACKS: Record<string, CircuitData> = {
     lengthKm: 5.807,
     svgPath: "M 100,100 C 150,100 200,100 250,150 L 400,300 C 450,350 450,400 400,450 C 350,500 300,500 250,450 L 100,250 Z M 150,200 L 350,200 C 400,200 450,150 450,100 C 450,50 400,20 350,20 L 200,20 C 150,20 100,50 100,100 Z",
     gridBox: "0 0 550 500",
+    trackImage: "suzuka-1.png",
   },
   // 5. China
   shanghai: {
@@ -61,6 +64,7 @@ export const TRACKS: Record<string, CircuitData> = {
     lengthKm: 5.451,
     svgPath: "M 200,400 L 200,100 C 200,50 350,50 350,100 C 350,150 250,150 250,200 L 450,200 C 500,200 500,400 450,400 L 100,400 C 50,400 50,250 100,250 Z",
     gridBox: "0 0 550 500",
+    trackImage: "shanghai-1.png",
   },
   // 6. Miami
   miami: {
@@ -70,6 +74,7 @@ export const TRACKS: Record<string, CircuitData> = {
     lengthKm: 5.412,
     svgPath: "M 350,350 L 450,300 C 500,280 500,220 450,200 L 200,100 C 150,80 100,80 100,150 C 100,200 150,220 200,250 L 300,300 L 300,400 C 300,450 250,450 250,400 L 200,300 C 150,250 100,250 100,350 Z",
     gridBox: "0 0 550 500",
+    trackImage: "miami-1.png",
   },
   // 7. Emilia Romagna
   imola: {
@@ -88,6 +93,7 @@ export const TRACKS: Record<string, CircuitData> = {
     lengthKm: 3.337,
     svgPath: "M 400,250 C 450,250 450,200 400,200 L 200,50 C 150,20 50,20 50,100 C 50,150 100,150 150,200 L 250,250 L 150,300 C 100,350 100,450 200,450 C 300,450 300,350 400,350 Z",
     gridBox: "0 0 550 500",
+    trackImage: "monte_carlo-1.png",
   },
   // 9. Canada
   montreal: {
@@ -97,6 +103,7 @@ export const TRACKS: Record<string, CircuitData> = {
     lengthKm: 4.361,
     svgPath: "M 100,400 L 400,100 C 450,50 480,50 450,100 L 350,200 L 450,250 C 500,280 500,350 450,400 L 150,450 C 100,480 50,450 100,400 Z",
     gridBox: "0 0 550 500",
+    trackImage: "montreal-1.png",
   },
   // 10. Spain
   barcelona: {
@@ -106,6 +113,7 @@ export const TRACKS: Record<string, CircuitData> = {
     lengthKm: 4.657,
     svgPath: PLACEHOLDER_PATH,
     gridBox: "0 0 550 500",
+    trackImage: "barcelona-1.png",
   },
   // 11. Austria
   spielberg: {
@@ -115,6 +123,7 @@ export const TRACKS: Record<string, CircuitData> = {
     lengthKm: 4.318,
     svgPath: "M 250,400 C 150,400 100,350 150,300 L 300,100 C 350,50 450,50 450,100 C 450,150 350,200 350,250 L 400,300 C 450,350 400,400 350,400 Z",
     gridBox: "0 0 550 500",
+    trackImage: "spielberg-1.png",
   },
   // 12. Great Britain
   silverstone: {
@@ -124,6 +133,7 @@ export const TRACKS: Record<string, CircuitData> = {
     lengthKm: 5.891,
     svgPath: "M 150,400 L 150,200 L 100,150 C 50,100 100,50 150,50 L 400,200 C 450,250 480,300 400,350 L 300,400 C 250,450 150,450 150,400 Z",
     gridBox: "0 0 550 500",
+    trackImage: "Silverstone-1.png",
   },
   // 13. Hungary
   budapest: {
@@ -133,6 +143,7 @@ export const TRACKS: Record<string, CircuitData> = {
     lengthKm: 4.381,
     svgPath: PLACEHOLDER_PATH,
     gridBox: "0 0 550 500",
+    trackImage: "Budapest-1.png",
   },
   // 14. Belgium
   spa: {
@@ -142,6 +153,7 @@ export const TRACKS: Record<string, CircuitData> = {
     lengthKm: 7.004,
     svgPath: PLACEHOLDER_PATH,
     gridBox: "0 0 550 500",
+    trackImage: "spa-1.png",
   },
   // 15. Netherlands
   zandvoort: {
@@ -151,6 +163,7 @@ export const TRACKS: Record<string, CircuitData> = {
     lengthKm: 4.259,
     svgPath: PLACEHOLDER_PATH,
     gridBox: "0 0 550 500",
+    trackImage: "zandvoort-1.png",
   },
   // 16. Italy
   monza: {
@@ -160,6 +173,7 @@ export const TRACKS: Record<string, CircuitData> = {
     lengthKm: 5.793,
     svgPath: "M 100,400 L 250,200 L 250,100 C 250,50 300,50 350,100 L 450,300 C 500,350 450,450 400,450 L 150,450 Z",
     gridBox: "0 0 550 500",
+    trackImage: "monza-1.png",
   },
   // 17. Azerbaijan
   baku: {
@@ -169,6 +183,7 @@ export const TRACKS: Record<string, CircuitData> = {
     lengthKm: 6.003,
     svgPath: "M 200,450 L 450,450 C 480,450 480,400 450,400 L 300,400 L 300,300 L 450,300 C 480,300 480,250 450,250 L 300,250 L 300,100 C 300,50 200,50 200,100 Z",
     gridBox: "0 0 550 500",
+    trackImage: "baku-1.png",
   },
   // 18. Singapore
   singapore: {
@@ -178,6 +193,7 @@ export const TRACKS: Record<string, CircuitData> = {
     lengthKm: 4.94,
     svgPath: PLACEHOLDER_PATH,
     gridBox: "0 0 550 500",
+    trackImage: "Singapore-1.png",
   },
   // 19. United States (Austin)
   austin: {
@@ -187,6 +203,7 @@ export const TRACKS: Record<string, CircuitData> = {
     lengthKm: 5.513,
     svgPath: "M 50,300 C 50,250 100,200 150,250 L 250,350 L 350,200 L 350,100 C 350,50 450,50 450,150 L 450,400 C 450,450 350,500 250,450 Z",
     gridBox: "0 0 550 500",
+    trackImage: "austin-1.png",
   },
   // 20. Mexico
   mexico: {
@@ -196,6 +213,7 @@ export const TRACKS: Record<string, CircuitData> = {
     lengthKm: 4.304,
     svgPath: PLACEHOLDER_PATH,
     gridBox: "0 0 550 500",
+    trackImage: "mexico_city-1.png",
   },
   // 21. Brazil
   interlagos: {
@@ -205,6 +223,7 @@ export const TRACKS: Record<string, CircuitData> = {
     lengthKm: 4.309,
     svgPath: "M 150,100 C 50,100 50,250 150,300 L 300,450 C 350,500 450,450 450,350 L 450,200 C 450,100 350,100 300,200 L 250,250 Z",
     gridBox: "0 0 550 500",
+    trackImage: "sao_Paulo-1.png",
   },
   // 22. Las Vegas
   vegas: {
@@ -214,6 +233,7 @@ export const TRACKS: Record<string, CircuitData> = {
     lengthKm: 6.201,
     svgPath: "M 200,450 L 400,450 C 450,450 450,400 400,400 L 250,400 L 250,100 C 250,50 200,50 200,100 Z",
     gridBox: "0 0 550 500",
+    trackImage: "las_Vegas-1.png",
   },
   // 23. Qatar
   losail: {
@@ -223,6 +243,7 @@ export const TRACKS: Record<string, CircuitData> = {
     lengthKm: 5.419,
     svgPath: PLACEHOLDER_PATH,
     gridBox: "0 0 550 500",
+    trackImage: "lusail-1.png",
   },
   // 24. Abu Dhabi
   abu_dhabi: {
@@ -230,6 +251,7 @@ export const TRACKS: Record<string, CircuitData> = {
     name: "Yas Marina Circuit",
     country: "United Arab Emirates",
     lengthKm: 5.281,
+    trackImage: "abu_dhabi-1.png",
     svgPath: `
       M 420,80 
       C 440,80 460,85 470,100 
@@ -280,7 +302,7 @@ export function getCircuitByMeetingLocation(meetingName: string): CircuitData {
   if (norm.includes("shanghai") || norm.includes("china")) return TRACKS["shanghai"];
   if (norm.includes("imola") || norm.includes("emilia")) return TRACKS["imola"];
   if (norm.includes("monaco")) return TRACKS["monaco"];
-  if (norm.includes("barcelona") || norm.includes("spain") || norm.includes("madrid")) return TRACKS["barcelona"];
+  if (norm.includes("barcelona") || norm.includes("spain") || norm.includes("madrid") || norm.includes("catalunya")) return TRACKS["barcelona"];
   if (norm.includes("spielberg") || norm.includes("austria")) return TRACKS["spielberg"];
   if (norm.includes("silverstone") || norm.includes("britain") || norm.includes("uk")) return TRACKS["silverstone"];
   if (norm.includes("budapest") || norm.includes("hungary")) return TRACKS["budapest"];

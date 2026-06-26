@@ -1,5 +1,5 @@
 """
-PitStop — Socket.IO Live Track Feed (v2)
+PitStop — Socket.IO Live Track Feed (v3)
 ==========================================
 Streams real car positions from OpenF1 via Socket.IO.
 
@@ -11,6 +11,11 @@ exactly as it happened.
 Also broadcasts the *true track path* — a GPS-accurate racing line built
 from one full lap of telemetry — so the frontend can draw the real circuit
 instead of an approximated SVG.
+
+v3 additions:
+ - session_status event (pre_race / started / safety_car / vsc / red_flag / finished)
+ - race_control event (flag changes, SC deploy/end)
+ - Positions (P1-P20) and gap-to-leader in track_update
 """
 
 import asyncio
@@ -19,17 +24,26 @@ from datetime import datetime, timedelta, timezone
 from backend.openf1_client import openf1
 import logging
 
+import os
+
 logger = logging.getLogger(__name__)
+
+# Determine CORS allowed origins
+allowed_origins = [
+    "http://localhost:3000",
+    "http://127.0.0.1:3000",
+    "http://localhost:5173",
+    "http://127.0.0.1:5173",
+]
+frontend_url = os.getenv("FRONTEND_URL")
+if frontend_url:
+    allowed_origins.append(frontend_url)
+    allowed_origins.append(frontend_url.rstrip("/"))
 
 # ─── Socket.IO Server ──────────────────────────────────────────
 sio = socketio.AsyncServer(
     async_mode="asgi",
-    cors_allowed_origins=[
-        "http://localhost:3000",
-        "http://127.0.0.1:3000",
-        "http://localhost:5173",
-        "http://127.0.0.1:5173",
-    ],
+    cors_allowed_origins=allowed_origins,
 )
 
 socket_app = socketio.ASGIApp(sio)
@@ -100,6 +114,8 @@ _is_running = False
 _playback_cursor: datetime | None = None
 _lap_timestamps: list[dict] = []
 _scaled_track_path: list[dict] = []  # pre-computed on startup
+_last_session_status: str = "pre_race"
+_last_race_control: list[dict] = []
 
 POLL_INTERVAL = 4.0       # seconds between each tick
 PLAYBACK_STEP = 4.0       # how many real seconds each tick advances
@@ -130,6 +146,11 @@ async def connect(sid, environ):
         "totalLaps": info.get("total_laps", 0),
     }, room=sid)
 
+    # Send current session status
+    await sio.emit("session_status", {
+        "status": _last_session_status,
+    }, room=sid)
+
     # Send the pre-scaled track path
     if _scaled_track_path:
         await sio.emit("track_path", _scaled_track_path, room=sid)
@@ -149,7 +170,7 @@ async def disconnect(sid):
 
 # ─── Feed loop ─────────────────────────────────────────────────
 async def _run_live_feed():
-    global _playback_cursor, _lap_timestamps, _sent_track_path
+    global _playback_cursor, _lap_timestamps, _last_session_status, _last_race_control
 
     logger.info("Starting live feed loop...")
 
@@ -199,10 +220,40 @@ async def _run_live_feed():
             date_from = t_start.isoformat()
             date_to = t_end.isoformat()
 
-            # Fetch positions
+            # ── Derive session status ──────────────────────────
+            new_status = openf1.derive_session_status(date_from, date_to)
+            if new_status != _last_session_status:
+                _last_session_status = new_status
+                await sio.emit("session_status", {"status": new_status})
+                logger.info(f"Session status → {new_status}")
+
+            # ── Fetch race control events ──────────────────────
+            rc_events = openf1.get_race_control(date_from=date_from, date_to=date_to)
+            if rc_events:
+                # Only emit new events (not previously sent)
+                new_events = []
+                for ev in rc_events:
+                    ev_key = f"{ev.get('date', '')}_{ev.get('message', '')}"
+                    if ev_key not in [f"{e.get('date', '')}_{e.get('message', '')}" for e in _last_race_control]:
+                        new_events.append({
+                            "flag": ev.get("flag", ""),
+                            "message": ev.get("message", ""),
+                            "category": ev.get("category", ""),
+                            "lap_number": ev.get("lap_number"),
+                            "driver_number": ev.get("driver_number"),
+                        })
+                if new_events:
+                    await sio.emit("race_control", new_events)
+                _last_race_control = rc_events[-20:]  # keep last 20 for dedup
+
+            # ── Fetch positions ────────────────────────────────
             raw_positions = openf1.get_positions_at(date_from, date_to)
 
             if raw_positions:
+                # Fetch official standings for position/gap data
+                standings = openf1.get_driver_standings_at(date_from, date_to)
+                intervals = openf1.get_driver_intervals_at(date_from, date_to)
+
                 # Build car data using pre-initialized scaler
                 cars = []
                 for p in raw_positions:
@@ -216,6 +267,15 @@ async def _run_live_feed():
                         "color": "#FFFFFF"
                     })
                     sx, sy = _scaler.scale(p["x"], p["y"])
+
+                    # Get official position from standings
+                    standing = standings.get(num, {})
+                    position = standing.get("position", 0)
+
+                    # Get interval/gap info
+                    interval_info = intervals.get(num, {})
+                    gap_to_leader = interval_info.get("gap_to_leader")
+
                     cars.append({
                         "driver": driver_info["acronym"],
                         "name": driver_info["name"],
@@ -224,7 +284,12 @@ async def _run_live_feed():
                         "number": str(num),
                         "x": sx,
                         "y": sy,
+                        "position": position,
+                        "gapToLeader": gap_to_leader,
                     })
+
+                # Sort by position for consistent ordering
+                cars.sort(key=lambda c: c["position"] if c["position"] > 0 else 999)
 
                 # Figure out current lap from timestamps
                 current_lap = _determine_lap(date_from)
@@ -234,6 +299,7 @@ async def _run_live_feed():
                     "lap": current_lap,
                     "cars": cars,
                     "progress": min(progress, 100),
+                    "sessionStatus": _last_session_status,
                 })
 
         except Exception as e:
